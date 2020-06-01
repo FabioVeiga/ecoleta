@@ -27,7 +27,7 @@ Este projeto é o produto final da senama **NLW 2020** com objetivos ecológicos
 ---
 ## Licença :page_facing_up:
 
-Esse projeto está sob a licença MIT. Para mais detalhes [clique aqui](https://github.com/fabioveiga/ecoleta/master/LICENSE.md) para mais detalhes.
+Esse projeto está sob a licença MIT. Para mais detalhes [clique aqui](https://github.com/FabioVeiga/ecoleta/blob/master/LICENSE.md) para mais detalhes.
 
 ---
 Feito por :gift_heart: [Fabio Veiga](https://github.com/FabioVeiga)
