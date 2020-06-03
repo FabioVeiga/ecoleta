@@ -1,5 +1,5 @@
-import React, { useEffect, useState, ChangeEvent } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState, ChangeEvent, FormEvent } from 'react'
+import { Link, useHistory } from 'react-router-dom'
 import { FiArrowLeft } from 'react-icons/fi'
 import { Map, TileLayer, Marker } from 'react-leaflet'
 import axios from 'axios'
@@ -16,6 +16,7 @@ const CreatePoint = () => {
     //sempre que cria um state para um objeto. SEMPRE precisa ajustar manualmente o tipo da varialvel
 
     //interface eh o formato que o objeto vai ter
+    //Interfaces
     interface Item{
         id: number
         title: string
@@ -28,6 +29,7 @@ const CreatePoint = () => {
         nome: string
     }
 
+    //States
     //quando eh feito a interface e add no useState o objeto se transforma na interfacec
     const [items, setItems] = useState<Item[]>([])
     const [ufs, setUfs] = useState<string[]>([])
@@ -37,8 +39,19 @@ const CreatePoint = () => {
     const [selectedUf, setselectedUf] = useState<string>('0')
     const [selectedCity, setselectedCity] = useState<string>('0')
     const [selectedPosition, setselectedPosition] = useState<[number, number]>([0,0])
+    const [selectedItems, setselectedItems] = useState<number[]>([])
 
 
+    const [formData, setformData] = useState({
+        name: '',
+        email: '',
+        whatsapp: ''
+    })
+
+    const history = useHistory()
+
+
+    //Alteracao do states
     useEffect(() => {
         api.get('items').then(response => {
             setItems(response.data)
@@ -91,6 +104,48 @@ const CreatePoint = () => {
         ])
     }
 
+    function handleInputChange(event: ChangeEvent<HTMLInputElement>){
+        const { name, value } = event.target
+        //... significa que ele vai copiar tudo que estiver dentro do objeto antes do replace
+        //spreadData
+        //quando se envolve em concheltes um nove ela vira o nome da varialvel
+        setformData({ ...formData, [name]: value})
+    }
+
+    function handleSeletedItem(id: number){
+        //armazena na variavel se o ID passado ja existe no array
+        const alreadySeleted = selectedItems.findIndex(item => item === id)
+        //se existe retira
+        if(alreadySeleted >= 0){
+            //ela vai contar todos os items menos o que precisa remover
+            const filteredItems = selectedItems.filter(item => item !== id)
+            setselectedItems(filteredItems)
+        //senao add
+        }else{
+            //para nao mudar o state original, deve se "copiar" com o ... o estado e add o novo
+            setselectedItems([...selectedItems, id])
+        }
+    }
+
+    async function handleSubmit(event: FormEvent){
+        //para nao alteraar a pagina quando enviar
+        event.preventDefault()
+        const { name, email, whatsapp } = formData
+        const uf = selectedUf
+        const city = selectedCity
+        const [latitude, longetude] = selectedPosition
+        const items = selectedItems
+        
+        const data = {
+            name, email, whatsapp, uf, city, latitude, longetude, items
+        }
+
+        await api.post('points', data)
+
+        alert('Ponto de coleta criado')
+        history.push('/')
+    }
+
     return(
         <div id="page-create-point">
             <header>
@@ -100,7 +155,7 @@ const CreatePoint = () => {
                     Voltar para home
                 </Link>
             </header>
-            <form>
+            <form onSubmit={handleSubmit}>
                 <h1>Cadastro do <br/> ponto de coleta</h1>
                 <fieldset>
                     <legend>
@@ -108,16 +163,21 @@ const CreatePoint = () => {
                     </legend>
                     <div className="field">
                         <label htmlFor="name">Nome da entidade</label>
-                        <input type="text" name="name" id="name"/>
+                        <input 
+                            type="text" 
+                            name="name" 
+                            id="name"
+                            onChange={handleInputChange}
+                        />
                     </div>
                     <div className="field-group">
                         <div className="field">
                             <label htmlFor="name">E-mail</label>
-                            <input type="email" name="email" id="email"/>
+                            <input type="email" name="email" id="email" onChange={handleInputChange}/>
                         </div>
                         <div className="field">
                             <label htmlFor="name">Whatsapp</label>
-                            <input type="text" name="whatsapp" id="whatsapp"/>
+                            <input type="text" name="whatsapp" id="whatsapp" onChange={handleInputChange}/>
                         </div>
                         </div>
                 </fieldset>
@@ -176,7 +236,11 @@ const CreatePoint = () => {
                     </legend>
                     <ul className="items-grid">
                         {items.map(item => (
-                            <li key={item.id}>
+                            <li 
+                                key={item.id} 
+                                onClick={() => handleSeletedItem(item.id)}
+                                className={selectedItems.includes(item.id) ? 'selected' : ''}
+                            >
                                 <img src={item.image_url} alt={item.title}/>
                                 <span>{item.title}</span>
                             </li>
