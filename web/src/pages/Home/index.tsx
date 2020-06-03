@@ -1,5 +1,6 @@
 import React from 'react'
 import { FiLogIn } from 'react-icons/fi'
+import { Link } from 'react-router-dom'//SPA = Single Page carrada de forma ded componente
 
 import './style.css'
 import logo from '../../assests/logo.svg'
@@ -14,13 +15,13 @@ const Home = () => {
                 <main>
                     <h1>Seu marketplace de coleta de residuos.</h1>
                     <p>Ajudamos as pessoas a encotrarem pontos de coleta de forma eficiente.</p>
-
-                    <a href="/cadastro">
+                    
+                    <Link to="/create-point">
                         <span>
                             <FiLogIn />
                         </span>
                         <strong>Cadastre um ponto ded coleta</strong>
-                    </a>
+                    </Link>
                 </main>
             </div>
         </div>
