@@ -15,6 +15,8 @@ interface Items{
 
 const Points = () => {
     const [items, setItems] = useState<Items[]>([])
+    const [selectedItems, setselectedItems] = useState<number[]>([])
+
     const navigation = useNavigation()
 
     useEffect(() => {
@@ -32,6 +34,21 @@ const Points = () => {
     function handleNavigateToDetail(){
         navigation.navigate('Detail')
     }
+
+    function handleSeletedItem(id: number){
+      //armazena na variavel se o ID passado ja existe no array
+      const alreadySeleted = selectedItems.findIndex(item => item === id)
+      //se existe retira
+      if(alreadySeleted >= 0){
+          //ela vai contar todos os items menos o que precisa remover
+          const filteredItems = selectedItems.filter(item => item !== id)
+          setselectedItems(filteredItems)
+      //senao add
+      }else{
+          //para nao mudar o state original, deve se "copiar" com o ... o estado e add o novo
+          setselectedItems([...selectedItems, id])
+      }
+  }
 
     return (
         <>
@@ -81,11 +98,20 @@ const Points = () => {
                     <View style={styles.itemsContainer}>
                         {items.map(item => (
                           //sempre  precisa ter uma key e no react-navite deve ser string
-                          <TouchableOpacity key={String(item.id)} style={styles.item} onPress={() => {}} >
+                          <TouchableOpacity 
+                            key={String(item.id)} 
+                            style={[
+                              styles.item,
+                              //condicao dentrto da estilizacao
+                              selectedItems.includes(item.id) ? styles.selectedItem : {}
+                            ]} 
+                            onPress={() => {handleSeletedItem(item.id)}}
+                            activeOpacity={0.6}
+                          >
                             <SvgUri width={42} height={42} uri={item.image_url} />
                             <Text style={styles.itemTitle}>{item.title}</Text>
                           </TouchableOpacity>
-                        ))}                        
+                        ))}
                     </View>
                 </ScrollView>
 
