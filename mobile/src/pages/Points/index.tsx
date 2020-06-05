@@ -41,7 +41,7 @@ const Points = () => {
                     >
                         <Marker
                             style={styles.mapMarker}
-                            onPress={() => {handleNavigateToDetail}}
+                            onPress={() => {handleNavigateToDetail()}}
                             coordinate={{
                                 latitude: -23.4698782,
                                 longitude: -46.6829469,
