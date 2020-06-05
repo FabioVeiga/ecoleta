@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Feather as Icon, FontAwesome } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import Mapview, { Marker } from 'react-native-maps'

@@ -1,15 +1,29 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Constants from 'expo-constants'
 import { Feather as Icon } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import Mapview, { Marker } from 'react-native-maps'
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native'
 import { SvgUri } from 'react-native-svg' //para usar SGV endereco externo
+import api from '../../services/api'
 
+interface Items{
+  id: number
+  title: string
+  image_url: string
+}
 
 const Points = () => {
-
+    const [items, setItems] = useState<Items[]>([])
     const navigation = useNavigation()
+
+    useEffect(() => {
+      api
+      .get('items')
+      .then(response => {
+        setItems(response.data)
+      })
+    },[])
 
     function handleNavigationBack(){
         navigation.goBack()
@@ -65,30 +79,13 @@ const Points = () => {
                     contentContainerStyle={{paddingHorizontal: 20}}
                 >
                     <View style={styles.itemsContainer}>
-                        <TouchableOpacity style={styles.item} onPress={() => {}} >
-                            <SvgUri width={42} height={42} uri='http://192.168.0.112:3333/uploads/lampadas.svg' />
-                            <Text style={styles.itemTitle}>Lampadas</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.item} onPress={() => {}} >
-                            <SvgUri width={42} height={42} uri='http://192.168.0.112:3333/uploads/lampadas.svg' />
-                            <Text style={styles.itemTitle}>Lampadas</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.item} onPress={() => {}} >
-                            <SvgUri width={42} height={42} uri='http://192.168.0.112:3333/uploads/lampadas.svg' />
-                            <Text style={styles.itemTitle}>Lampadas</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.item} onPress={() => {}} >
-                            <SvgUri width={42} height={42} uri='http://192.168.0.112:3333/uploads/lampadas.svg' />
-                            <Text style={styles.itemTitle}>Lampadas</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.item} onPress={() => {}} >
-                            <SvgUri width={42} height={42} uri='http://192.168.0.112:3333/uploads/lampadas.svg' />
-                            <Text style={styles.itemTitle}>Lampadas</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.item} onPress={() => {}} >
-                            <SvgUri width={42} height={42} uri='http://192.168.0.112:3333/uploads/lampadas.svg' />
-                            <Text style={styles.itemTitle}>Lampadas</Text>
-                        </TouchableOpacity>
+                        {items.map(item => (
+                          //sempre  precisa ter uma key e no react-navite deve ser string
+                          <TouchableOpacity key={String(item.id)} style={styles.item} onPress={() => {}} >
+                            <SvgUri width={42} height={42} uri={item.image_url} />
+                            <Text style={styles.itemTitle}>{item.title}</Text>
+                          </TouchableOpacity>
+                        ))}                        
                     </View>
                 </ScrollView>
 
