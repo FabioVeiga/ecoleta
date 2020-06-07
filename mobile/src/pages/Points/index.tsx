@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Constants from 'expo-constants'
 import { Feather as Icon } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import Mapview, { Marker } from 'react-native-maps'
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native'
 import { SvgUri } from 'react-native-svg' //para usar SGV endereco externo
@@ -14,7 +14,6 @@ interface Items{
   image_url: string
 }
 
-
 interface Point{
   id: number
   image: string
@@ -23,13 +22,21 @@ interface Point{
   longetude: number
 }
 
+interface Params{
+  uf: string
+  city: string
+}
+
 const Points = () => {
     const [items, setItems] = useState<Items[]>([])
     const [selectedItems, setselectedItems] = useState<number[]>([])
     const [initialPosition, setinitialPosition] = useState<[number, number]>([0,0])
     const [points, setPoints] = useState<Point[]>([])
-
+    
     const navigation = useNavigation()
+
+    const route = useRoute()
+    const routesParams = route.params as Params 
 
     useEffect(() => {
       async function loadPosition(){
@@ -61,17 +68,19 @@ const Points = () => {
     },[])
 
     useEffect(() => {
-      api.get('points', {
+      api
+      .get('points', {
         params:{
-          city: 'São Paulo',
-          uf: 'SP',
-          items: [1,2,3,4]
+          city: routesParams.city,
+          uf: routesParams.uf,
+          items: selectedItems
         }
-      }).then(response => {
+      })
+      .then(response => {
         setPoints(response.data)
       })
-    }, [])
-
+    }, [selectedItems])
+   
 
     function handleNavigationBack(){
         navigation.goBack()
